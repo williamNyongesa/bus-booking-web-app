@@ -77,3 +77,12 @@ class Schedule(db.Model, SerializerMixin):
 
     bus = db.relationship('Bus', backref='schedules')
     bookings = db.relationship('Booking', backref='schedule')
+
+    class Booking(db.Model):
+    __tablename__ = 'bookings'
+    id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+    # Foreign Key relationships
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    bus_id = db.Column(db.Integer, db.ForeignKey('buses.id', ondelete='CASCADE'), nullable=False)
