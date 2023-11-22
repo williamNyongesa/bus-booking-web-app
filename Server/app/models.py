@@ -66,3 +66,14 @@ class Bus(db.Model):
 
     # Relationships
     bookings = db.relationship('Booking', backref='bus', lazy=True)
+class Schedule(db.Model, SerializerMixin):
+    __tablename__ = 'schedules'
+
+
+    id = db.Column(db.Integer, primary_key=True)
+    departure_time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    route = db.Column(db.String, nullable=False)
+    bus_id = db.Column(db.Integer, db.ForeignKey('buses.id'), nullable=False)
+
+    bus = db.relationship('Bus', backref='schedules')
+    bookings = db.relationship('Booking', backref='schedule')
