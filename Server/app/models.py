@@ -15,10 +15,14 @@ class User(db.Model):
     email = db.Column(db.String, unique=True)
     password = db.Column(db.String, unique=True)
     role = db.Column(db.String)
-    
-    # Relationships
-    buses = db.relationship('Bus', backref='owner', lazy=True)
-    bookings = db.relationship('Booking', backref='user', lazy=True)
+
+
+#Possible Suggested relationships
+    # buses = db.relationship('Bus', backref='driver')
+    # bookings = db.relationship('Booking', backref='user')
+
+    # do we want users to see schedules?
+
 
     # validation
     @validates("email")
@@ -45,12 +49,10 @@ class User(db.Model):
 class Driver(db.Model):
     __tablename__ = 'drivers'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     license_number = db.Column(db.String(20), unique=True, nullable=False)
-    user = db.relationship('User', backref='driver', lazy=True)
-
     buses = db.relationship('Bus', backref='driver', lazy=True)
-
+    
 
 class Bus(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -64,4 +66,3 @@ class Bus(db.Model):
 
     # Relationships
     bookings = db.relationship('Booking', backref='bus', lazy=True)
-
