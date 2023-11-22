@@ -52,4 +52,17 @@ class Driver(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     license_number = db.Column(db.String(20), unique=True, nullable=False)
     buses = db.relationship('Bus', backref='driver', lazy=True)
+    
 
+class Bus(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    number_of_seats = db.Column(db.Integer, nullable=False)
+    cost_per_seat = db.Column(db.Float, nullable=False)
+    route = db.Column(db.String(100), nullable=False)
+    time_of_travel = db.Column(db.String(20), nullable=False)
+
+    # Foreign Key relationships
+    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+    # Relationships
+    bookings = db.relationship('Booking', backref='bus', lazy=True)
