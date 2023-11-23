@@ -17,7 +17,7 @@ db.init_app(app)
 api = Api(app)
 CORS(app, origins="*")
 
-# we'll use to restful:
+# we'll use restful to:
 #1. get to the landing page
 #2. get by id
 #3. get all
