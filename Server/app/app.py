@@ -17,6 +17,12 @@ db.init_app(app)
 api = Api(app)
 CORS(app, origins="*")
 
+# we'll use to restful:
+#1. get to the landing page
+#2. get by id
+#3. get all
+#4. post
+#5. patch
 
 if __name__=="__main__":
     app.run(port=5555,debug=True)
