@@ -6,7 +6,6 @@ from flask_bcrypt import Bcrypt
 from sqlalchemy.ext.hybrid import hybrid_property
 
 
-
 db = SQLAlchemy()
 bcrypt = Bcrypt()
 
