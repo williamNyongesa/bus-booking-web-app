@@ -1,28 +1,21 @@
-from flask import Flask
+from flask import Flask, request, jsonify
+from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from models import db
-from flask_restful import Resource,Api
 from flask_cors import CORS
+from models import db, User, Role, Bus, Schedule
 
 app = Flask(__name__)
+app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://your_username:your_password@localhost/your_database"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["SECRET_KEY"] = "your_secret_key"
+app.json['indent'] = 4
+app.json['sort_keys'] = False
 
-app.config["SQLALCHEMY_DATABASE_URI"]="sqlite:///bbwa.db"
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"]=False
-app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
-
-app.json.compact = False
-
-migrate = Migrate(app, db)
 db.init_app(app)
-api = Api(app)
-CORS(app, origins="*")
+migrate = Migrate(app, db)
+CORS(app)
 
-# we'll use restful to:
-#1. get to the landing page
-#2. get by id
-#3. get all
-#4. post
-#5. patch
+# Define your routes and API endpoints here
 
-if __name__=="__main__":
-    app.run(port=5555,debug=True)
+if __name__ == "__main__":
+    app.run(port=5000, debug=True)
