@@ -4,6 +4,9 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+flask-login = "*"
+flask-cors = "*"
+flask-migrate = "*"
 
 [dev-packages]
 
