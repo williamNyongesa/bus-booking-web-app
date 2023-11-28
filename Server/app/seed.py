@@ -15,8 +15,9 @@ with app.app_context():
     print("Database cleared and created...")
 
     # Seed Role
-    roles = ['admin', 'user', 'driver']
-    role_objects = [Role(name=role) for role in roles]
+    my_roles = ['admin', 'user', 'driver']
+    
+    role_objects = [Role(name=role) for role in my_roles]
     db.session.add_all(role_objects)
     db.session.commit()
     print("Roles seeded!")
@@ -27,7 +28,8 @@ with app.app_context():
         user_info = User(
             email=fake.unique.email(),
             password="password123",  # Placeholder password
-            roles=[rc(role_objects)]
+            role_id=rc(role_objects).id
+            
         )
         users.append(user_info)
     db.session.add_all(users)
@@ -42,7 +44,7 @@ with app.app_context():
             cost_per_seat=uniform(10.0, 50.0),
             route=fake.word(),
             time_of_travel=fake.time(),
-            driver_id=rc(users).id
+            user_id=rc(users).id
         )
         buses.append(bus_info)
     db.session.add_all(buses)
