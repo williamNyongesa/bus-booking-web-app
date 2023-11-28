@@ -1,0 +1,46 @@
+/* Navbar.css */
+@import url("https://fonts.googleapis.com/css2?family=Lalezar&display=swap");
+
+.custom-navbar {
+  background-color: #37473f;
+  /* border-radius: 10px; */
+}
+
+.bus-icon {
+  height: 50px; /* Set the height of the bus icon */
+  margin-right: 10px; /* Adjust the margin as needed */
+}
+
+.navbar-brand.bus-connect {
+  display: flex;
+  color: #d1c23a;
+  align-items: center;
+  font-weight: bold;
+  font-family: "Lalezar", cursive; /* Use the Lalezar font */
+  font-size: 25px;
+}
+
+.navbar-brand .bold-brand {
+  font-weight: bold;
+  font-family: "Lalezar", cursive;
+  font-size: 25px;
+}
+
+.custom-navbar,
+.custom-navbar .nav-link {
+  font-family: "Lalezar", cursive;
+  font-size: 18px;
+  color: #ffff;
+  margin-right: 15px;
+}
+
+.custom-navbar .btn-outline-dark {
+  background-color: #d1c23a;
+  color: #2c2b2b; /* Set the font color to the background color of the navbar */
+  border-radius: 50px; /* Set border-radius for a pill shape */
+}
+
+.custom-navbar .btn-outline-dark:hover {
+  background-color: #d1c23a; /* Set the background color on hover */
+  color: #37473f; /* Set the font color on hover */
+}
