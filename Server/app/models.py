@@ -2,9 +2,14 @@ from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from sqlalchemy_serializer import SerializerMixin
+from sqlalchemy.ext.hybrid import hybrid_property
+# from sqlalchemy.orm import validate
+from flask_bcrypt import Bcrypt
+from werkzeug.security import check_password_hash
 
 db = SQLAlchemy()
 
+bcrypt = Bcrypt()
 # roles_users = db.Table(
 #     'roles_users',
 #     db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
@@ -22,9 +27,24 @@ class User(db.Model, UserMixin, SerializerMixin):
     password = db.Column(db.String(255), nullable=False)
     active = db.Column(db.Boolean(), default=True)
     role_id = db.Column(db.Integer, db.ForeignKey("roles.id"))
+    # password = db.Column(db.String(255), nullable=False)
 
     def __repr__(self):
         return f"User(email={self.email})"
+    
+    @hybrid_property
+    def password_hash(self):
+        raise AttributeError("password hash cannot be viewed")
+
+    @password_hash.setter
+    def password_hash(self, password):
+        salt = bcrypt.gensalt().decode('utf-8')
+        password_hash = bcrypt.hashpw(password.encode('utf-8'), salt.encode('utf-8'))
+        self.password = password_hash.decode('utf-8')
+
+    def authenticate(self, password):
+        return bcrypt.checkpw(password.encode('utf-8'), self.password.encode('utf-8'))
+        
     
 class Bus(db.Model, SerializerMixin):
     __tablename__ = 'bus'
