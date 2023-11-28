@@ -25,6 +25,7 @@ function NavbarComp() {
           <Nav>
             <Nav.Link href="#/">Home</Nav.Link>
             <Nav.Link href="/schedule">Schedule</Nav.Link>
+            <Nav.Link href="/myBookings">My Bookings</Nav.Link>
             <Nav.Link href="/maintenance">Maintenance</Nav.Link>
             <Button style={{ height: "35px" }} variant="outline-dark" href="/">
               Logout
