@@ -77,9 +77,21 @@ class Login(Resource):
             else:
                 print("Invalid password.")  
                 return {"error": "Invalid password"}, 401
-        
-        print("User not registered.") 
-        return {"error": "User not Registered"}, 404
+
+
+    class Logout(Resource):
+        def post(self):
+            if "user_id" in session:
+                session.pop("user_id", None)
+                return {"message": "Logout successful"}, 200
+            else:
+                return {"message": "User not logged in"}, 401
+
+            
+            print("User not registered.") 
+            return {"error": "User not Registered"}, 404
+
+
 
 class UserResource(Resource):
     def get(self):
@@ -123,6 +135,7 @@ api.add_resource(UserResource, '/users')
 api.add_resource(By_Id, "/session", endpoint="session")
 api.add_resource(Signup, "/signup", endpoint="signup")
 api.add_resource(Login, "/login", endpoint="login")
+api.add_resource(Logout, "/logout", endpoint="logout")
 
 if __name__=="__main__":
     app.run(port=5555,debug=True)
