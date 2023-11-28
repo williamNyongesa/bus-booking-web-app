@@ -7,6 +7,8 @@ from models import User
 
 app = Flask(__name__)
 
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
+
 app.config["SQLALCHEMY_DATABASE_URI"]="sqlite:///bbwa.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"]=False
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
@@ -40,6 +42,45 @@ class Index(Resource):
     def get(self):
         res = "welcome"
         return make_response(res,200)
+    
+class Signup(Resource):
+    def post(self):
+        email = request.get_json().get("email")
+        password = request.get_json().get("password")
+
+        if email and password:
+            new_user = User(email=email, password=password)  # Set the password here
+            # new_user.password_hash = password  # Remove this line
+
+            db.session.add(new_user)
+            db.session.commit()
+
+            session["user_id"] = new_user.id
+            return new_user.to_dict(), 201
+
+        return {"error": "Email and password must be provided!"}, 422
+
+class Login(Resource):
+    def post(self):
+        email = request.get_json().get("email")
+        password = request.get_json().get("password")
+
+        user = User.query.filter(User.email == email).first()
+
+        if user:
+            if user.authenticate(password):
+                session['user_id'] = user.id
+
+                user_dict = user.to_dict()
+                print("Login successful. User ID:", user.id)  
+                return make_response(jsonify(user_dict), 201)
+            else:
+                print("Invalid password.")  
+                return {"error": "Invalid password"}, 401
+        
+        print("User not registered.") 
+        return {"error": "User not Registered"}, 404
+
 class UserResource(Resource):
     def get(self):
         users = User.query.all()
@@ -80,6 +121,8 @@ class UserResource(Resource):
 api.add_resource(Index, "/")
 api.add_resource(UserResource, '/users')
 api.add_resource(By_Id, "/session", endpoint="session")
+api.add_resource(Signup, "/signup", endpoint="signup")
+api.add_resource(Login, "/login", endpoint="login")
 
 if __name__=="__main__":
     app.run(port=5555,debug=True)

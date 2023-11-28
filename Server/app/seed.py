@@ -36,6 +36,8 @@ with app.app_context():
     db.session.commit()
     print("Users seeded!")
 
+    
+
     # Seed Bus
     buses = []
     for _ in range(20):
