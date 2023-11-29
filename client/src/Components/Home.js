@@ -11,7 +11,9 @@ function Home() {
   return (
     <div className="home-container">
       <h2>Welcome to Bus Connect!</h2>
-      <p>Explore our services and book your journey now.</p>
+      <p className="home-description">
+        Explore our services and book your journey now.
+      </p>
       <button onClick={handleBookHereClick} className="book-button">
         BOOK HERE
       </button>

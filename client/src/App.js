@@ -6,6 +6,7 @@ import NavbarComp from "./Components/Navbar/Navbar";
 import LoginSignup from "./Components/LoginSignup/LoginSignup";
 import Footer from "./Components/Footer";
 import Home from "./Components/Home";
+import Booking from "./Components/BookSearch";
 
 function App() {
   const navigate = useNavigate();
@@ -20,6 +21,7 @@ function App() {
         <Routes>
           <Route exact path="/" element={<LoginSignup />} />
           <Route path="/home" element={<Home />} />
+          <Route path="/booking" element={<Booking />} />
         </Routes>
       </div>
       <Footer />
