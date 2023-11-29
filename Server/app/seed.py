@@ -26,8 +26,9 @@ with app.app_context():
     users = []
     for _ in range(20):
         user_info = User(
+            name = fake.name(),
             email=fake.unique.email(),
-            password="password123",  # Placeholder password
+            # password="password123",  # Placeholder password
             role_id=rc(role_objects).id
             
         )
@@ -58,6 +59,7 @@ with app.app_context():
     for i in range(20):
         data = Schedule(
             departure_time=fake.date_time_this_year(),
+            price = rc([20,30,40,50,60,70,80,90,100]),
             bus_id=rc(buses).id
         )
         schedule_data.append(data)
