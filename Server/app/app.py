@@ -1,6 +1,6 @@
 from flask import Flask, make_response, request, jsonify, session
 from flask_migrate import Migrate
-from models import db, User
+from models import db, User,Schedule
 from flask_restful import Resource, Api
 from flask_cors import CORS
 
@@ -94,12 +94,29 @@ class UserResource(Resource):
         return make_response(jsonify(res), 200)
 
 
+# schedule
+class ScheduleByID(Resource):
+    def delete(self, id):
+        item_to_delete = Schedule.query.filter_by(id=id).first()
+
+        if item_to_delete:
+            db.session.delete(item_to_delete)
+            db.session.commit()
+
+            response =  make_response(jsonify({}),200)
+        else:
+            response = {"err":"schedule not found"},404
+
+        return response
+
+
 api.add_resource(Index, "/")
 api.add_resource(UserResource, "/users")
 api.add_resource(CheckSession, "/session", endpoint="session")
 api.add_resource(Signup, "/signup", endpoint="signup")
 api.add_resource(Login, "/login", endpoint="login")
 api.add_resource(Logout, "/logout", endpoint="logout")
+api.add_resource(ScheduleByID, "/schedule/<int:id>", endpoint="schedule/<int:id>")
 
 if __name__ == "__main__":
     app.run(port=5555, debug=True)
