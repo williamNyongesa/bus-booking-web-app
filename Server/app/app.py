@@ -108,7 +108,20 @@ class ScheduleByID(Resource):
             response = {"err":"schedule not found"},404
 
         return response
+    def get(self, id):
+        searched_item = Schedule.query.filter_by(id=id).first()
 
+        if searched_item:
+            dict_data = {
+                "id":searched_item.id,
+                "departure_time":searched_item.departure_time,
+                "price":searched_item.price,
+                "bus_id":searched_item.bus_id
+
+            }
+            return make_response(jsonify(dict_data), 200)
+        else:
+            return {"err":"not found"},404
 
 api.add_resource(Index, "/")
 api.add_resource(UserResource, "/users")
