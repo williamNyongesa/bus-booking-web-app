@@ -1,13 +1,62 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+
+/* Page wrapper for flexbox layout */
+#page-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Ensure the wrapper takes at least the full height of the viewport */
+}
+
+/* Main content area flexes to take available space */
+#main-content {
+  flex: 1;
+}
+
+/* Footer styles */
+footer {
+  background-color: #d1c23a; /* Set your desired background color */
+  color: #495057; /* Set your desired text color */
+  padding: 20px;
+  text-align: center;
+  margin-top: auto; /* Add space between content and footer */
+  /* height: 120px; */
+}
+
+/* Home styles */
+.home-container {
+  text-align: center;
+  padding: 20px;
+  color: #fff;
+}
+
+p.home-description {
+  color: #666;
+}
+
+.book-button {
+  background-color: #699635;
+  color: #fff;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  margin-top: 20px;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.book-button:hover {
+  background-color: #51633b;
 }
