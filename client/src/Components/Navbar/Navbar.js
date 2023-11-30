@@ -5,7 +5,7 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import "./Navbar.css";
-// import LogoutButton from "../Logout";
+import LogoutButton from "../Logout";
 
 function NavbarComp() {
   return (
@@ -23,13 +23,12 @@ function NavbarComp() {
             <Nav.Link href="/other">Other</Nav.Link> */}
           </Nav>
           <Nav>
-            <Nav.Link href="#/">Home</Nav.Link>
+            <Nav.Link href="/home">Home</Nav.Link>
             <Nav.Link href="/schedule">Schedule</Nav.Link>
             <Nav.Link href="/myBookings">My Bookings</Nav.Link>
             <Nav.Link href="/maintenance">Maintenance</Nav.Link>
             <Button style={{ height: "35px" }} variant="outline-dark" href="/">
-              Logout
-              {/* <LogoutButton /> */}
+              <LogoutButton />
             </Button>
           </Nav>
         </Navbar.Collapse>
