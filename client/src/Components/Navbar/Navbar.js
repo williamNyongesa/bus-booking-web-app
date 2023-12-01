@@ -24,9 +24,9 @@ function NavbarComp() {
           </Nav>
           <Nav>
             <Nav.Link href="/home">Home</Nav.Link>
-            <Nav.Link href="/schedule">Schedule</Nav.Link>
+            <Nav.Link href="/schedule-list">Schedule</Nav.Link>
             <Nav.Link href="/myBookings">My Bookings</Nav.Link>
-            <Nav.Link href="/maintenance">Maintenance</Nav.Link>
+            <Nav.Link href="/add-schedule">Maintenance</Nav.Link>
             <Button style={{ height: "35px" }} variant="outline-dark" href="/">
               <LogoutButton />
             </Button>
