@@ -26,7 +26,7 @@ function LoginSignup() {
   //Signup
   const Signup = async () => {
     try {
-      const response = await fetch("/signup", {
+      const response = await fetch("http://localhost:5000/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -36,8 +36,8 @@ function LoginSignup() {
           email,
           password,
         }),
-        mode: "cors", // Ensure CORS mode
-        credentials: "include",
+        mode: "cors",
+        credentials: "include", // Ensure credentials are included
       });
 
       const data = await response.json();
@@ -63,7 +63,7 @@ function LoginSignup() {
 
   const Login = async () => {
     try {
-      const response = await fetch("/login", {
+      const response = await fetch("http://localhost:5000/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -77,7 +77,7 @@ function LoginSignup() {
         setIsLoggedIn(true);
         setMessage("Login successful! Redirecting...");
         setTimeout(() => {
-          navigate("/contacts");
+          navigate("/home");
         }, 2000);
       } else {
         setMessage(`Login failed: ${data.error}`);

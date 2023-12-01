@@ -44,13 +44,13 @@ function Booking() {
       setError(null);
     }
 
-    // You can navigate based on your requirements
+    // navigate based on your requirements
     navigate(`/search?departure=${departure}&arrival=${arrival}`);
   };
 
   return (
     <div className="booking-container">
-      <h2>Book Your Journey</h2>
+      <h2 className="title-description">Your Destination</h2>
       <label>Departure:</label>
       <input
         type="text"

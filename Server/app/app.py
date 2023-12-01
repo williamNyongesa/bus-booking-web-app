@@ -6,6 +6,9 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 
+CORS(app, origins=["http://localhost:3000"], supports_credentials=True, methods=["GET", "POST", "PUT", "DELETE"])
+
+
 app.secret_key = "b'\xd4\xfa\x1d\x0e\x02\x87\x91\x96V\xb5H{\xd3\xd5\x1ee'"
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///bbwa.db"
@@ -17,7 +20,7 @@ app.json.compact = False
 migrate = Migrate(app, db)
 db.init_app(app)
 api = Api(app)
-CORS(app, origins="*")
+# CORS(app, origins="*")
 
 
 @app.before_request
@@ -44,23 +47,29 @@ class Index(Resource):
 
 class Signup(Resource):
     def post(self):
-        data = request.get_json()
-        name = data.get("name")
-        email = data.get("email")
-        password = data.get("password")
+        name = request.json.get("name")
+        email = request.json.get("email")
+        password = request.json.get("password")
 
         if name and email and password:
-            new_user = User(email=email, name=name)
-            new_user.password_hash = password
+            # Check if a user with the provided email already exists
+            existing_user = User.query.filter_by(email=email).first()
+            if existing_user:
+                return {"error": "Email is already registered"}, 409
 
+            # If the email is unique, create a new user
+            new_user = User(name=name, email=email)
+            new_user.set_password(password)
 
             db.session.add(new_user)
             db.session.commit()
 
             session["user_id"] = new_user.id
-            return new_user.to_dict(), 201
+            user_data = new_user.to_dict()
+            return {"user": user_data, "message": "User successfully created"}, 201
 
         return {"error": "Name, email, and password must be provided!"}, 422
+
 
 
 class Login(Resource):
