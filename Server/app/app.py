@@ -1,12 +1,14 @@
+from datetime import datetime
 from flask import Flask, make_response, request, jsonify, session
 from flask_migrate import Migrate
-from models import db, User
-from flask_restful import Resource, Api
+from models import db, User, Schedule
+from flask_restful import Resource, Api, reqparse
 from flask_cors import CORS
 
 app = Flask(__name__)
 
-CORS(app, origins=["http://localhost:3000"], supports_credentials=True, methods=["GET", "POST", "PUT", "DELETE"])
+# CORS(app, origins=["http://localhost:3000"], supports_credentials=True, methods=["GET", "POST", "PUT", "DELETE"])
+CORS(app, supports_credentials=True, origins=["http://localhost:3000"], methods=["GET", "POST", "PUT", "DELETE"])
 
 
 app.secret_key = "b'\xd4\xfa\x1d\x0e\x02\x87\x91\x96V\xb5H{\xd3\xd5\x1ee'"
@@ -22,11 +24,22 @@ db.init_app(app)
 api = Api(app)
 # CORS(app, origins="*")
 
+# Parser for handling schedule data
+schedule_parser = reqparse.RequestParser()
+schedule_parser.add_argument("departure_place", type=str, required=True, help="Departure place is required.")
+schedule_parser.add_argument("arrival_place", type=str, required=True, help="Arrival place is required.")
+schedule_parser.add_argument("departure_time", type=str, required=True, help="Departure time is required.")
+schedule_parser.add_argument("price", type=float, required=True, help="Price is required.")
+schedule_parser.add_argument("bus_id", type=str, required=True, help="Bus ID is required.")
+
 
 @app.before_request
 def check_if_logged_in():
-    if "user_id" not in session and request.endpoint not in ["signup", "login", "users"]:
+    exempted_endpoints = ["signup", "login", "users", "add_schedule", "delete_schedule"]
+
+    if request.method != 'OPTIONS' and "user_id" not in session and request.endpoint not in exempted_endpoints:
         return {"error": "unauthorized access!"}, 401
+
 
 
 class CheckSession(Resource):
@@ -101,7 +114,91 @@ class UserResource(Resource):
         users = User.query.all()
         res = [user.to_dict() for user in users]
         return make_response(jsonify(res), 200)
+    
+class AddSchedule(Resource):
+    def get(self):
+        schedules = Schedule.query.all()
+        res = [schedule.to_dict() for schedule in schedules]
+        return make_response(jsonify(res), 200)
+    
+    def post(self):
+        data = schedule_parser.parse_args()
+        departure_place = data.get("departure_place")
+        arrival_place = data.get("arrival_place")
+        departure_time_str = data['departure_time']
+        departure_time = datetime.strptime(departure_time_str, '%Y-%m-%dT%H:%M:%S.%fZ')
+        price = data.get("price")
+        bus_id = data.get("bus_id")
 
+        if departure_place and arrival_place and departure_time and price and bus_id:
+            new_schedule = Schedule(
+                departure_place=departure_place,
+                arrival_place=arrival_place,
+                departure_time=departure_time,
+                price=price,
+                bus_id=bus_id
+            )
+
+            db.session.add(new_schedule)
+            db.session.commit()
+
+            return {"message": "Schedule added successfully"}, 201
+
+        return {"error": "All fields must be provided!"}, 422
+
+    def options(self):
+        response = make_response()
+        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:3000')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+        response.headers.add('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
+        response.headers.add('Access-Control-Allow-Credentials', 'true')
+        response.status_code = 200  # Set HTTP ok status for OPTIONS request
+        return response
+
+
+class EditSchedule(Resource):
+    def put(self):
+        data = schedule_parser.parse_args()
+        schedule_id = request.json.get("id")
+        departure_place = data.get("departure_place")
+        arrival_place = data.get("arrival_place")
+        departure_time_str = data['departure_time']
+        departure_time = datetime.strptime(departure_time_str, '%Y-%m-%dT%H:%M:%S.%fZ')
+        price = data.get("price")
+        bus_id = data.get("bus_id")
+
+        if schedule_id and departure_place and arrival_place and departure_time and price and bus_id:
+            schedule = Schedule.query.get(schedule_id)
+            if schedule:
+                schedule.departure_place = departure_place
+                schedule.arrival_place = arrival_place
+                schedule.departure_time = departure_time
+                schedule.price = price
+                schedule.bus_id = bus_id
+
+                db.session.commit()
+
+                return {"message": "Schedule updated successfully"}, 200
+            else:
+                return {"error": "Schedule not found"}, 404
+
+        return {"error": "All fields must be provided!"}, 422
+
+class DeleteSchedule(Resource):
+    def delete(self):
+        schedule_id = request.json.get("id")
+
+        if schedule_id:
+            schedule = Schedule.query.get(schedule_id)
+            if schedule:
+                db.session.delete(schedule)
+                db.session.commit()
+
+                return {"message": "Schedule deleted successfully"}, 200
+            else:
+                return {"error": "Schedule not found"}, 404
+
+        return {"error": "Schedule ID must be provided!"}, 422
 
 api.add_resource(Index, "/")
 api.add_resource(UserResource, "/users")
@@ -109,6 +206,9 @@ api.add_resource(CheckSession, "/session", endpoint="session")
 api.add_resource(Signup, "/signup", endpoint="signup")
 api.add_resource(Login, "/login", endpoint="login")
 api.add_resource(Logout, "/logout", endpoint="logout")
+api.add_resource(AddSchedule, "/add-schedule", endpoint="add_schedule")
+api.add_resource(EditSchedule, "/edit-schedule", endpoint="edit_schedule")
+api.add_resource(DeleteSchedule, "/delete-schedule", endpoint="delete_schedule")
 
 if __name__ == "__main__":
     app.run(port=5555, debug=True)

@@ -1,5 +1,5 @@
 // import logo from "./logo.svg";
-import React, { useState } from "react";
+import React from "react";
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import "./App.css";
 import NavbarComp from "./Components/Navbar/Navbar";
@@ -12,11 +12,7 @@ import AddScheduleForm from "./Components/AddScheduleForm";
 
 function App() {
   const navigate = useNavigate();
-  const [schedules, setSchedules] = useState([]);
 
-  const handleAddSchedule = (addedSchedule) => {
-    setSchedules((prevSchedules) => [...prevSchedules, addedSchedule]);
-  };
   const isLoginSignupRoute = window.location.pathname === "/";
   const renderNavbar = !isLoginSignupRoute && <NavbarComp />;
 
@@ -30,14 +26,8 @@ function App() {
           <Route exact path="/" element={<LoginSignup />} />
           <Route path="/home" element={<Home />} />
           <Route path="/booking" element={<Booking />} />
-          <Route
-            path="/schedule-list"
-            element={<ScheduleList schedules={schedules} />}
-          />
-          <Route
-            path="/add-schedule"
-            element={<AddScheduleForm onAddSchedule={handleAddSchedule} />}
-          />
+          <Route path="/schedule-list" element={<ScheduleList />} />
+          <Route path="/add-schedule" element={<AddScheduleForm />} />
         </Routes>
       </div>
       <Footer />
