@@ -2,53 +2,55 @@ from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from sqlalchemy_serializer import SerializerMixin
-from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import validates
 from flask_bcrypt import Bcrypt
-from werkzeug.security import check_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 
 db = SQLAlchemy()
-
 bcrypt = Bcrypt()
-# roles_users = db.Table(
-#     'roles_users',
-#     db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
-#     db.Column('role_id', db.Integer(), db.ForeignKey('role.id'))
-# )
 
 class User(db.Model, UserMixin, SerializerMixin):
-    
     __tablename__ = 'users'
 
-    serialize_rules = ("-role.users",)
+    serialize_rules = ("-user_role.users",)
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    _password_hash = db.Column(db.String,nullable=False)
     active = db.Column(db.Boolean(), default=True)
-    role_id = db.Column(db.Integer, db.ForeignKey("roles.id"))
-    # password = db.Column(db.String(255), nullable=False)
+    password = db.Column(db.String)
 
-    def __repr__(self):
-        return f"User(email={self.email})"
-    @hybrid_property
-    def password_hash(self):
-        raise AttributeError("password hash cannot be viewed")
+    def set_password(self, password):
+        self.password = generate_password_hash(password)
 
-    @password_hash.setter
-    def password_hash(self, password):
-        password_hash = bcrypt.generate_password_hash(password.encode('utf-8'))
-        self._password_hash = password_hash.decode('utf-8')
+    def check_password(self, password):
+        return check_password_hash(self.password, password)
 
-    def authenticate(self, password):
-        return bcrypt.check_password_hash(
-            self._password_hash, password.encode('utf-8')
-        )
+    @validates("email")
+    def validate_email(self, key, email):
+        assert "@" in email, "Invalid email address"
+        return email
+    
+    @validates("password")
+    def validate_password(self, key, password):
+        # At least 8 characters, one uppercase letter, one lowercase letter, and one digit
+        assert len(password) >= 8, "Password must be at least 8 characters long"
+        assert any(
+            char.isupper() for char in password
+        ), "Password must contain at least one uppercase letter"
+        assert any(
+            char.islower() for char in password
+        ), "Password must contain at least one lowercase letter"
+        assert any(
+            char.isdigit() for char in password
+        ), "Password must contain at least one digit"
+        return password
+
+
 class Bus(db.Model, SerializerMixin):
     __tablename__ = 'bus'
 
-    serialize_rules = ("-users.bus","-schedule.buses",)
+    serialize_rules = ("-user.buses", "-schedules.bus",)
 
     id = db.Column(db.Integer, primary_key=True)
     number_of_seats = db.Column(db.Integer, nullable=False)
@@ -61,35 +63,25 @@ class Bus(db.Model, SerializerMixin):
     def __repr__(self):
         return f"Bus(route={self.route}, time_of_travel={self.time_of_travel})"
 
-
-class Role(db.Model,SerializerMixin):
-    __tablename__ = 'roles'
-
-    serialize_rules = ("-users.role",)
-    id = db.Column(db.Integer(), primary_key=True)
-    name = db.Column(db.String(80), unique=True)
-    description = db.Column(db.String(255))
-
-    users = db.relationship('User', backref= 'role')
-
-
 class Schedule(db.Model, SerializerMixin):
     __tablename__ = 'schedules'
 
-    serialize_rules = ("-bus.schedules")
+    serialize_rules = ("-bus.schedules",)
+
     id = db.Column(db.Integer, primary_key=True)
+    departure_place = db.Column(db.String(255), nullable=False)
+    arrival_place = db.Column(db.String(255), nullable=False)
     departure_time = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     price = db.Column(db.Integer)
     bus_id = db.Column(db.Integer, db.ForeignKey('bus.id'))
 
-
     def __repr__(self):
-        return f"Schedule(departure_time={self.departure_time})"
+        return f"Schedule(departure_time={self.departure_place}, arrival_place={self.arrival_place}, departure_time={self.departure_time})"
     
     @validates("price")
     def validate_price(self, key, price):
         price = int(price)
-        if price < 1 or price > 110:
-            raise ValueError("Price must be between 1 and 110")
+        if price < 1 or price > 5000:
+            raise ValueError("Price must be between 1 and 5000")
         
         return price

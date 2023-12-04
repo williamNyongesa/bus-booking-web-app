@@ -7,21 +7,27 @@ import LoginSignup from "./Components/LoginSignup/LoginSignup";
 import Footer from "./Components/Footer";
 import Home from "./Components/Home";
 import Booking from "./Components/BookSearch";
+import ScheduleList from "./Components/ScheduleList";
+import AddScheduleForm from "./Components/AddScheduleForm";
 
 function App() {
   const navigate = useNavigate();
+
   const isLoginSignupRoute = window.location.pathname === "/";
   const renderNavbar = !isLoginSignupRoute && <NavbarComp />;
 
   return (
     <div id="page-wrapper" className="App">
-      {/* {renderNavbar}  uncomment once endpoint correctly connected with backend */}
+      {/*uncomment once endpoint correctly connected with backend*/}
+      {renderNavbar}
       <div id="main-content">
-        <NavbarComp />
+        {/* <NavbarComp /> */}
         <Routes>
           <Route exact path="/" element={<LoginSignup />} />
           <Route path="/home" element={<Home />} />
           <Route path="/booking" element={<Booking />} />
+          <Route path="/schedule-list" element={<ScheduleList />} />
+          <Route path="/add-schedule" element={<AddScheduleForm />} />
         </Routes>
       </div>
       <Footer />
