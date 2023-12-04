@@ -69,17 +69,19 @@ class Schedule(db.Model, SerializerMixin):
     serialize_rules = ("-bus.schedules",)
 
     id = db.Column(db.Integer, primary_key=True)
+    departure_place = db.Column(db.String(255), nullable=False)
+    arrival_place = db.Column(db.String(255), nullable=False)
     departure_time = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     price = db.Column(db.Integer)
     bus_id = db.Column(db.Integer, db.ForeignKey('bus.id'))
 
     def __repr__(self):
-        return f"Schedule(departure_time={self.departure_time})"
+        return f"Schedule(departure_time={self.departure_place}, arrival_place={self.arrival_place}, departure_time={self.departure_time})"
     
     @validates("price")
     def validate_price(self, key, price):
         price = int(price)
-        if price < 1 or price > 110:
-            raise ValueError("Price must be between 1 and 110")
+        if price < 1 or price > 5000:
+            raise ValueError("Price must be between 1 and 5000")
         
         return price
