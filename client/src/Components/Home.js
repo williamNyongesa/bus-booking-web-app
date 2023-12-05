@@ -10,7 +10,7 @@ function Home() {
 
   return (
     <div className="home-container">
-      <h2>Welcome to Bus Connect!</h2>
+      <h2 className="welcome-message">Welcome to Bus Connect!</h2>
       <p className="home-description">
         Explore our services and book your journey now.
       </p>
