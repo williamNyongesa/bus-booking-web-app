@@ -19,6 +19,7 @@ class User(db.Model, UserMixin, SerializerMixin):
     email = db.Column(db.String(120), unique=True, nullable=False)
     active = db.Column(db.Boolean(), default=True)
     password = db.Column(db.String)
+    role = db.Column(db.String,  nullable=False, default='client') 
 
     def set_password(self, password):
         self.password = generate_password_hash(password)

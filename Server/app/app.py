@@ -4,6 +4,8 @@ from flask_migrate import Migrate
 from models import db, User, Schedule
 from flask_restful import Resource, Api, reqparse
 from flask_cors import CORS
+from werkzeug.security import generate_password_hash
+
 
 app = Flask(__name__)
 
@@ -24,6 +26,27 @@ db.init_app(app)
 api = Api(app)
 # CORS(app, origins="*")
 
+
+# Seed initial data including the admin user
+def seed_initial_data():
+    admin_user = User.query.filter_by(email="admin@example.com").first()
+    if not admin_user:
+        admin = User(
+            name="Admin",
+            email="admin@example.com",
+            password=generate_password_hash("Adminpassword123"),
+            role="admin"
+        )
+        db.session.add(admin)
+        db.session.commit()
+        print(f"Admin user created: {admin}")
+
+
+with app.app_context():
+    db.create_all()
+    seed_initial_data()
+
+
 # Parser for handling schedule data
 schedule_parser = reqparse.RequestParser()
 schedule_parser.add_argument("departure_place", type=str, required=True, help="Departure place is required.")
@@ -35,10 +58,21 @@ schedule_parser.add_argument("bus_id", type=str, required=True, help="Bus ID is 
 
 @app.before_request
 def check_if_logged_in():
-    exempted_endpoints = ["signup", "login", "users", "add_schedule", "delete_schedule"]
+    exempted_endpoints = ["signup", "login", "users", "add_schedule", "edit_schedule", "delete_schedule", "admin_route", "driver_route"]
 
     if request.method != 'OPTIONS' and "user_id" not in session and request.endpoint not in exempted_endpoints:
         return {"error": "unauthorized access!"}, 401
+
+    # Check user roles for admin and driver routes
+    if request.endpoint in ["admin_route", "driver_route"]:
+        user_id = session.get("user_id")
+        if user_id:
+            user = User.query.get(user_id)
+            if user and user.role == "admin" and request.endpoint == "admin_route":
+                return
+            elif user and user.role == "driver" and request.endpoint == "driver_route":
+                return
+        return {"error": "unauthorized access for this role!"}, 401
 
 
 
@@ -56,13 +90,41 @@ class Index(Resource):
     def get(self):
         res = "welcome"
         return make_response(res, 200)
+    
 
+
+class AdminDetailsResource(Resource):
+    def get(self):
+        if "user_id" in session:
+            user_id = session["user_id"]
+            user = User.query.get(user_id)
+            if user and user.role == "admin":
+                admin_details = {
+                    "name": user.name,
+                    "email": user.email,
+                    "role": user.role,
+                }
+                return jsonify(admin_details), 200
+            else:
+                return jsonify({"error": "User is not an admin"}), 403
+        else:
+            return jsonify({"error": "User not logged in"}), 401
+
+class AdminRoute(Resource):
+    def get(self):
+        return {"message": "Admin route accessed"}
+
+class DriverRoute(Resource):
+    def get(self):
+        return {"message": "Driver route accessed"}
 
 class Signup(Resource):
     def post(self):
         name = request.json.get("name")
         email = request.json.get("email")
         password = request.json.get("password")
+
+        role = request.json.get("role", "cleint")
 
         if name and email and password:
             # Check if a user with the provided email already exists
@@ -95,7 +157,10 @@ class Login(Resource):
 
         if user and user.check_password(password):
             session["user_id"] = user.id
-            return user.to_dict(), 201
+            session["user_role"] = user.role  # Store the user role in the session
+            return {"user": user.to_dict(), "role": user.role}, 201
+
+            
 
         return {"error": "Invalid credentials"}, 401
 
@@ -122,29 +187,32 @@ class AddSchedule(Resource):
         return make_response(jsonify(res), 200)
     
     def post(self):
-        data = schedule_parser.parse_args()
-        departure_place = data.get("departure_place")
-        arrival_place = data.get("arrival_place")
-        departure_time_str = data['departure_time']
-        departure_time = datetime.strptime(departure_time_str, '%Y-%m-%dT%H:%M:%S.%fZ')
-        price = data.get("price")
-        bus_id = data.get("bus_id")
+        if "user_id" in session and session.get("user_role") == "admin":
+            data = schedule_parser.parse_args()
+            departure_place = data.get("departure_place")
+            arrival_place = data.get("arrival_place")
+            departure_time_str = data['departure_time']
+            departure_time = datetime.strptime(departure_time_str, '%Y-%m-%dT%H:%M:%S.%fZ')
+            price = data.get("price")
+            bus_id = data.get("bus_id")
 
-        if departure_place and arrival_place and departure_time and price and bus_id:
-            new_schedule = Schedule(
-                departure_place=departure_place,
-                arrival_place=arrival_place,
-                departure_time=departure_time,
-                price=price,
-                bus_id=bus_id
-            )
+            if departure_place and arrival_place and departure_time and price and bus_id:
+                new_schedule = Schedule(
+                    departure_place=departure_place,
+                    arrival_place=arrival_place,
+                    departure_time=departure_time,
+                    price=price,
+                    bus_id=bus_id
+                )
 
-            db.session.add(new_schedule)
-            db.session.commit()
+                db.session.add(new_schedule)
+                db.session.commit()
 
-            return {"message": "Schedule added successfully"}, 201
-
-        return {"error": "All fields must be provided!"}, 422
+                return {"message": "Schedule added successfully"}, 201
+            else:
+                return {"error": "All fields must be provided!"}, 422
+        else:
+            return {"error": "Unauthorized access for this role!"}, 401
 
     def options(self):
         response = make_response()
@@ -209,6 +277,9 @@ api.add_resource(Logout, "/logout", endpoint="logout")
 api.add_resource(AddSchedule, "/add-schedule", endpoint="add_schedule")
 api.add_resource(EditSchedule, "/edit-schedule", endpoint="edit_schedule")
 api.add_resource(DeleteSchedule, "/delete-schedule", endpoint="delete_schedule")
+api.add_resource(AdminRoute, "/admin", endpoint="admin_route")  # Admin route
+api.add_resource(DriverRoute, "/driver", endpoint="driver_route")  # Driver route
+api.add_resource(AdminDetailsResource, "/admin-details")  # Admin details endpoint
 
 if __name__ == "__main__":
     app.run(port=5555, debug=True)

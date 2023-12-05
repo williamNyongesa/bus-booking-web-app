@@ -159,7 +159,7 @@ li {
 .add-schedule-container {
   background-color: rgba(157, 181, 169, 0.8);
   padding: 20px;
-  display: flex;
+  /* display: flex; */
   flex-direction: column;
   border-radius: 20px;
   margin-top: 40px;
@@ -207,7 +207,7 @@ li {
 .schedule-list-container {
   background-color: rgba(157, 181, 169, 0.8);
   padding: 20px;
-  display: flex;
+  /* display: flex; */
   flex-direction: column;
   border-radius: 20px;
   margin-top: 40px;

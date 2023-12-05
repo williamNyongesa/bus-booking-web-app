@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom"; // Updated import
 import { Button, Form, Container } from "react-bootstrap";
+import { useUser } from "./USerContext";
 
 const AddScheduleForm = ({ onAddSchedule }) => {
   const [departurePlace, setDeparturePlace] = useState("");
@@ -9,47 +10,54 @@ const AddScheduleForm = ({ onAddSchedule }) => {
   const [price, setPrice] = useState("");
   const [busId, setBusId] = useState("");
   const navigate = useNavigate();
+  const { user } = useUser(); // Access user and role from the context
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const newSchedule = {
-      departure_place: departurePlace,
-      arrival_place: arrivalPlace,
-      departure_time: new Date(`2000-01-01T${departureTime}:00`),
-      price: price,
-      bus_id: busId,
-    };
+    // Check if the user is an admin
+    if (user && user.role === "admin") {
+      const newSchedule = {
+        departure_place: departurePlace,
+        arrival_place: arrivalPlace,
+        departure_time: new Date(`2000-01-01T${departureTime}:00`),
+        price: price,
+        bus_id: busId,
+      };
 
-    // Send the new schedule to the backend
-    try {
-      const response = await fetch("http://localhost:5000/add-schedule", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newSchedule),
-        credentials: "include",
-      });
+      // Send the new schedule to the backend
+      try {
+        const response = await fetch("http://localhost:5000/add-schedule", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newSchedule),
+          credentials: "include",
+        });
 
-      console.log("Response status:", response.status);
+        console.log("Response status:", response.status);
 
-      if (!response.ok) {
-        throw new Error("Failed to add schedule");
+        if (!response.ok) {
+          throw new Error("Failed to add schedule");
+        }
+
+        // Clear the form fields if posting is successful
+        setDeparturePlace("");
+        setArrivalPlace("");
+        setDepartureTime("");
+        setPrice("");
+        setBusId("");
+
+        // Redirect to the schedule list page
+        navigate("/schedule-list");
+      } catch (error) {
+        console.error("Error adding schedule:", error.message);
+        // Handle error (show an error message, etc.)
       }
-
-      // Clear the form fields if posting is successful
-      setDeparturePlace("");
-      setArrivalPlace("");
-      setDepartureTime("");
-      setPrice("");
-      setBusId("");
-
-      // Redirect to the schedule list page
-      navigate("/schedule-list"); // Updated usage
-    } catch (error) {
-      console.error("Error adding schedule:", error.message);
-      // Handle error (show an error message, etc.)
+    } else {
+      // Handle unauthorized access (redirect, show error message, etc.)
+      console.error("Unauthorized access. Only admin can add schedules.");
     }
   };
 
