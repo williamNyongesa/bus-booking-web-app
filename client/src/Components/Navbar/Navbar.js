@@ -6,8 +6,11 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import "./Navbar.css";
 import LogoutButton from "../Logout";
+import { useUser } from "../USerContext";
 
-function NavbarComp() {
+function NavbarComp({ userRole }) {
+  const isDriverOrAdmin = userRole === "driver" || userRole === "admin";
+
   return (
     <Navbar collapseOnSelect expand="lg" className="custom-navbar">
       <Container>
@@ -26,7 +29,10 @@ function NavbarComp() {
             <Nav.Link href="/home">Home</Nav.Link>
             <Nav.Link href="/schedule-list">Schedule</Nav.Link>
             <Nav.Link href="/myBookings">My Bookings</Nav.Link>
-            <Nav.Link href="/add-schedule">Maintenance</Nav.Link>
+            {/* <Nav.Link href="/add-schedule">Maintenance</Nav.Link> */}
+            {isDriverOrAdmin && (
+              <Nav.Link href="/add-schedule">Maintenance</Nav.Link>
+            )}
             <Button style={{ height: "35px" }} variant="outline-dark" href="/">
               <LogoutButton />
             </Button>
