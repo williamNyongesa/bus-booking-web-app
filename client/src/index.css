@@ -1,13 +1,220 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: "Inter", "Lalezar" -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+    "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+
+/* Page wrapper for flexbox layout */
+#page-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Ensure the wrapper takes at least the full height of the viewport */
+}
+
+#main-content {
+  flex: 1;
+}
+
+/* Footer styles */
+footer {
+  background-color: #d1c23a;
+  color: #495057;
+  padding: 20px;
+  text-align: center;
+  margin-top: auto; /* Add space between content and footer */
+  /* height: 120px; */
+}
+
+/* Home styles */
+.home-container {
+  text-align: center;
+  padding: 20px;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 200px; /* Adjusted margin for centering */
+}
+
+.welcome-message {
+  font-size: 60px; /* Increased font size */
+  margin-bottom: 20px; /* Added margin for better spacing */
+}
+
+p.home-description {
+  color: #d3d3d3;
+  font-size: 20px;
+  font-style: italic;
+}
+
+.book-button {
+  background-color: #699635;
+  color: #fff;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  margin-top: 100px;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.book-button:hover {
+  background-color: #51633b;
+}
+
+/* BookSearch styles */
+.booking-container {
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  margin-top: 40px;
+  background-color: #37473f;
+  padding: 30px;
+  border-radius: 20px;
+  align-items: center;
+  width: 600px;
+  height: 40vh;
+  justify-content: center;
+  font-family: "Roboto", sans-serif;
+}
+
+.title-description {
+  font-size: 36px;
+  margin-bottom: 20px;
+  color: #ccc;
+  font-family: "Lalezar", sans-serif;
+  /* font-family: ; */
+}
+
+label {
+  font-family: "Lalezar", sans-serif;
+  color: #fff; /* Set text color to white */
+  display: block;
+  margin-top: 10px;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.search-button {
+  background-color: #d1c23a;
+  color: #000;
+  padding: 5px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  margin-top: 10px;
+  transition: background-color 0.3s ease-in-out;
+  font-family: "Lalezar", sans-serif;
+}
+
+.search-button:hover {
+  background-color: #727270;
+}
+
+.error-message {
+  color: #c44848c9;
+  margin-top: 10px;
+}
+
+.search-results {
+  margin-top: 20px;
+}
+
+.search-results h3 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+/* Add Schedule Form */
+.add-schedule-container {
+  background-color: rgba(157, 181, 169, 0.8);
+  padding: 20px;
+  /* display: flex; */
+  flex-direction: column;
+  border-radius: 20px;
+  margin-top: 40px;
+  margin: auto;
+  align-items: center;
+  width: 300px;
+  /* height: 60vh; */
+  justify-content: center;
+  font-family: "Roboto", sans-serif;
+}
+
+.add-schedule-title {
+  margin-bottom: 20px;
+}
+
+.place-label {
+  color: rgb(36, 35, 35);
+  font-family: "Inter", sans-serif;
+  font-size: 16px;
+  text-align: left; /* Align labels to the left */
+  display: block; /* Ensure the labels are displayed as blocks */
+  margin-bottom: 5px;
+}
+
+/* Adjust the form elements */
+.mb-3 {
+  margin-bottom: 10px;
+}
+
+/* Reduce input font size and padding */
+.form-control {
+  font-size: 12px;
+  padding: 6px;
+  margin-top: 5px;
+  margin-bottom: 10other px;
+}
+
+/* Reduce button font size and padding */
+.add-schedule {
+  font-size: 14px;
+  padding: 8px 16px;
+  margin-top: 10px;
+}
+
+.schedule-list-container {
+  background-color: rgba(157, 181, 169, 0.8);
+  padding: 20px;
+  /* display: flex; */
+  flex-direction: column;
+  border-radius: 20px;
+  margin-top: 40px;
+  margin: auto;
+  align-items: center;
+  width: 300px;
+  /* height: 60vh; */
+  justify-content: center;
+  font-family: "Roboto", sans-serif;
 }
