@@ -16,6 +16,33 @@ function LoginSignup() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [userDetails, setUserDetails] = useState(null);
+  const [userType, setUserType] = useState("user");
+
+  useEffect(() => {
+    // Fetch admin details after login
+    const fetchAdminDetails = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/admin-details", {
+          credentials: "include",
+        });
+        const data = await response.json();
+        if (response.ok) {
+          setUserDetails(data);
+        }
+      } catch (error) {
+        console.error("Error fetching admin details:", error);
+      }
+    };
+
+    fetchAdminDetails();
+  }, []);
+
+  // Function to handle user type change
+  const handleUserTypeChange = (event) => {
+    setUserType(event.target.value);
+    setAction(event.target.value === "user" ? "Sign Up" : "Login");
+  };
 
   //resets form by clearing the fields
   const resetForm = () => {
@@ -23,6 +50,7 @@ function LoginSignup() {
     setEmail("");
     setPassword("");
   };
+
   //Signup
   const Signup = async () => {
     try {
@@ -35,6 +63,7 @@ function LoginSignup() {
           name: name,
           email,
           password,
+          userType,
         }),
         mode: "cors",
         credentials: "include", // Ensure credentials are included
@@ -73,8 +102,23 @@ function LoginSignup() {
 
       const data = await response.json();
       if (response.ok) {
-        console.log("login successful:", data);
+        console.log("Login successful:", data);
         setIsLoggedIn(true);
+        // Store user details in state or context, including the role
+        setUserDetails(data);
+
+        // Check user role and redirect accordingly
+        if (data.role === "admin") {
+          // Redirect to admin dashboard
+          navigate("/admin-dashboard");
+        } else if (data.role === "driver") {
+          // Redirect to driver dashboard
+          navigate("/driver-dashboard");
+        } else {
+          // Redirect to regular user dashboard (home, for example)
+          navigate("/home");
+        }
+
         setMessage("Login successful! Redirecting...");
         setTimeout(() => {
           navigate("/home");
@@ -94,6 +138,14 @@ function LoginSignup() {
 
   return (
     <div className="login-signup-container">
+      <div className="user-type-dropdown">
+        <label htmlFor="userType">User Type:</label>
+        <select id="userType" value={userType} onChange={handleUserTypeChange}>
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+          <option value="driver">Driver</option>
+        </select>
+      </div>
       <div className="header">
         <h5
           style={{
