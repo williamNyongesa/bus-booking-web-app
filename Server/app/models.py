@@ -60,6 +60,7 @@ class Bus(db.Model, SerializerMixin):
     time_of_travel = db.Column(db.String(50), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     schedules = db.relationship('Schedule', backref='bus', lazy=True)
+    
 
     def __repr__(self):
         return f"Bus(route={self.route}, time_of_travel={self.time_of_travel})"

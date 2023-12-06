@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-function Home() {
+function Home({ isuser,isdriver,isadmin,  role, setRole }) {
   const navigate = useNavigate();
 
   const handleBookHereClick = () => {

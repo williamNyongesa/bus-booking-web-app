@@ -124,7 +124,7 @@ class Signup(Resource):
         email = request.json.get("email")
         password = request.json.get("password")
 
-        role = request.json.get("role", "cleint")
+        role = request.json.get("userType")
 
         if name and email and password:
             # Check if a user with the provided email already exists
@@ -133,7 +133,7 @@ class Signup(Resource):
                 return {"error": "Email is already registered"}, 409
 
             # If the email is unique, create a new user
-            new_user = User(name=name, email=email)
+            new_user = User(name=name, email=email, role=role)
             new_user.set_password(password)
 
             db.session.add(new_user)

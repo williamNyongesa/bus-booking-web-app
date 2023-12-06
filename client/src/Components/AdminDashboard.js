@@ -33,6 +33,7 @@ const AdminDashboardComp = () => {
 
             if (adminDetailsResponse.ok) {
               setAdminDetails(adminDetailsData);
+            console.log(adminDetailsData)
             } else {
               console.error(
                 "Error fetching admin details:",
@@ -54,7 +55,7 @@ const AdminDashboardComp = () => {
   return (
     <div>
       <h2>Welcome to Admin Dashboard</h2>
-      {userRole === "admin" && (
+      
         <>
           <div>
             {/* Render admin pre-login details here */}
@@ -69,7 +70,7 @@ const AdminDashboardComp = () => {
           </div>
           <AddScheduleForm /> {/* Render only for admin */}
         </>
-      )}
+      
       <h3>Schedule List</h3>
       <ScheduleList schedules={schedules} />{" "}
       {/* Render the ScheduleList component */}
