@@ -7,8 +7,9 @@ import Navbar from "react-bootstrap/Navbar";
 import "./Navbar.css";
 import LogoutButton from "../Logout";
 import { useUser } from "../USerContext";
+import { Link } from "react-router-dom";
 
-function NavbarComp({ userRole }) {
+function NavbarComp({ userRole , isuser,isdriver,isadmin,  role, setRole}) {
   const isDriverOrAdmin = userRole === "driver" || userRole === "admin";
 
   return (
@@ -26,13 +27,13 @@ function NavbarComp({ userRole }) {
             <Nav.Link href="/other">Other</Nav.Link> */}
           </Nav>
           <Nav>
-            <Nav.Link href="/home">Home</Nav.Link>
-            <Nav.Link href="/schedule-list">Schedule</Nav.Link>
-            <Nav.Link href="/myBookings">My Bookings</Nav.Link>
+            <Link to="/home">Home</Link>
+            <Link to="/schedule-list">Schedule</Link>
+            <Link to="/myBookings">My Bookings</Link>
             {/* <Nav.Link href="/add-schedule">Maintenance</Nav.Link> */}
-            {isDriverOrAdmin && (
-              <Nav.Link href="/add-schedule">Maintenance</Nav.Link>
-            )}
+            {isdriver? (
+               <Link to='/add-schedule' > Maintenance</Link>
+            ):null}
             <Button style={{ height: "35px" }} variant="outline-dark" href="/">
               <LogoutButton />
             </Button>

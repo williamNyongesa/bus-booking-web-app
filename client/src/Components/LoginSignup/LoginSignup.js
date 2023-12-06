@@ -7,7 +7,7 @@ export const checkLoginStatus = (setIsLoggedIn) => {
   setIsLoggedIn(userIsLoggedIn);
 };
 
-function LoginSignup() {
+function LoginSignup({ isuser,isdriver,isadmin, setIsuser, setIsdriver, setIsadmin, role, setRole }) {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState("");
@@ -18,6 +18,7 @@ function LoginSignup() {
   const [password, setPassword] = useState("");
   const [userDetails, setUserDetails] = useState(null);
   const [userType, setUserType] = useState("user");
+
 
   useEffect(() => {
     // Fetch admin details after login
@@ -62,8 +63,8 @@ function LoginSignup() {
         body: JSON.stringify({
           name: name,
           email,
-          password,
-          userType,
+          password ,
+          userType:userType ,
         }),
         mode: "cors",
         credentials: "include", // Ensure credentials are included
@@ -75,6 +76,23 @@ function LoginSignup() {
         console.log("Signup successful:", data);
         resetForm();
         Login();
+        role = data.user.role
+        console.log(data.user.role)
+        if (role == 'user'){
+          setIsuser(true)
+          setIsadmin(false)
+          setIsdriver(false)
+        }
+        else if(role == 'driver'){
+          setIsuser(false)
+          setIsadmin(false)
+          setIsdriver(true)
+        }
+        else if(role == 'admin'){
+          setIsuser(false)
+          setIsadmin(true)
+          setIsdriver(false)
+        }
       } else {
         setMessage(`Signup failed: ${data.error}`);
         console.error("Signup error:", data.error);
@@ -106,23 +124,33 @@ function LoginSignup() {
         setIsLoggedIn(true);
         // Store user details in state or context, including the role
         setUserDetails(data);
-
+        console.log(data);
+        role= data.user.role
         // Check user role and redirect accordingly
-        if (data.role === "admin") {
-          // Redirect to admin dashboard
-          navigate("/admin-dashboard");
-        } else if (data.role === "driver") {
-          // Redirect to driver dashboard
-          navigate("/driver-dashboard");
-        } else {
-          // Redirect to regular user dashboard (home, for example)
-          navigate("/home");
+        if (role == 'user'){
+          setIsuser(true)
+          setIsadmin(false)
+          setIsdriver(false)
+          navigate('/home')
+
+        }
+        else if(role == 'driver'){
+          setIsuser(false)
+          setIsadmin(false)
+          setIsdriver(true)
+          navigate('/driver-dashboard')
+        }
+        else if(role == 'admin'){
+          setIsuser(false)
+          setIsadmin(true)
+          setIsdriver(false)
+          navigate('/admin-dashboard')
         }
 
         setMessage("Login successful! Redirecting...");
-        setTimeout(() => {
-          navigate("/home");
-        }, 2000);
+        // setTimeout(() => {
+        //   navigate("/home");
+        // }, 2000);
       } else {
         setMessage(`Login failed: ${data.error}`);
         console.error("Login error:", data.error);
@@ -140,7 +168,7 @@ function LoginSignup() {
     <div className="login-signup-container">
       <div className="user-type-dropdown">
         <label htmlFor="userType">User Type:</label>
-        <select id="userType" value={userType} onChange={handleUserTypeChange}>
+        <select id="userType" name="userType" value={userType} onChange={handleUserTypeChange}>
           <option value="user">User</option>
           <option value="admin">Admin</option>
           <option value="driver">Driver</option>

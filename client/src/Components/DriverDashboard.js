@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import ScheduleList from "../ScheduleList"; // Import ScheduleList component
+import ScheduleList from "./ScheduleList";
 
 const DriverDashboard = () => {
   const [schedules, setSchedules] = useState([]);

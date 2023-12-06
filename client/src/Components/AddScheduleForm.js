@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom"; // Updated import
 import { Button, Form, Container } from "react-bootstrap";
 import { useUser } from "./USerContext";
 
-const AddScheduleForm = ({ onAddSchedule }) => {
+const AddScheduleForm = ({ onAddSchedule, isdriver }) => {
   const [departurePlace, setDeparturePlace] = useState("");
   const [arrivalPlace, setArrivalPlace] = useState("");
   const [departureTime, setDepartureTime] = useState("");
@@ -12,6 +12,8 @@ const AddScheduleForm = ({ onAddSchedule }) => {
   const navigate = useNavigate();
   const { user } = useUser(); // Access user and role from the context
 
+
+  console.log(isdriver);
   const handleSubmit = async (e) => {
     e.preventDefault();
 
