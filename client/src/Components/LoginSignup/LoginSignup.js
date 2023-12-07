@@ -138,13 +138,13 @@ function LoginSignup({ isuser,isdriver,isadmin, setIsuser, setIsdriver, setIsadm
           setIsuser(false)
           setIsadmin(false)
           setIsdriver(true)
-          navigate('/driver-dashboard')
+          navigate('/home')
         }
         else if(role == 'admin'){
           setIsuser(false)
           setIsadmin(true)
           setIsdriver(false)
-          navigate('/admin-dashboard')
+          navigate('/home')
         }
 
         setMessage("Login successful! Redirecting...");

@@ -9,8 +9,8 @@ import Home from "./Components/Home";
 import Booking from "./Components/BookSearch";
 import ScheduleList from "./Components/ScheduleList";
 import AddScheduleForm from "./Components/AddScheduleForm";
-import DriverDashboard from "./Components/DriverDashboard";
-import AdminDashboardComp from "./Components/AdminDashboard.js";
+// import DriverDashboard from "./Components/DriverDashboard";
+// import AdminDashboardComp from "./Components/AdminDashboard.js";
 import { useState } from "react";
 import { UserProvider, useUser } from "./Components/USerContext";
 import { Navbar } from "react-bootstrap";
@@ -57,8 +57,8 @@ function App() {
             <Route path="/schedule-list" element={<ScheduleList />} />
             <Route path="/add-schedule" element={<AddScheduleForm isdriver={isdriver} />} />
             {renderAddScheduleForm}
-            <Route path="/admin-dashboard" element={<AdminDashboardComp />} />
-            <Route path="/driver-dashboard" element={<DriverDashboard/>} />
+            {/* <Route path="/admin-dashboard" element={<AdminDashboardComp />} />
+            <Route path="/driver-dashboard" element={<DriverDashboard/>} /> */}
           </Routes>
         </div>
         <Footer />
