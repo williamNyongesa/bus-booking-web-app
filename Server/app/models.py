@@ -9,16 +9,28 @@ from werkzeug.security import generate_password_hash, check_password_hash
 db = SQLAlchemy()
 bcrypt = Bcrypt()
 
-class User(db.Model, UserMixin, SerializerMixin):
+# Association table for the many-to-many relationship
+user_schedule = db.Table(
+    'user_schedule',
+    db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
+    db.Column('schedule_id', db.Integer, db.ForeignKey('schedules.id'), primary_key=True)
+)
+
+
+class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
 
-    serialize_rules = ("-user_role.users",)
+    serialize_rules = ("-bookings.users","-user_role.users",)
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     active = db.Column(db.Boolean(), default=True)
     password = db.Column(db.String)
+
+    # Many-to-many relationship with Schedule through the user_schedule association table
+    bookings = db.relationship('Schedule', secondary=user_schedule, back_populates='users')
+
 
     def set_password(self, password):
         self.password = generate_password_hash(password)
@@ -66,7 +78,7 @@ class Bus(db.Model, SerializerMixin):
 class Schedule(db.Model, SerializerMixin):
     __tablename__ = 'schedules'
 
-    serialize_rules = ("-bus.schedules",)
+    serialize_rules = ("-bus.schedules","-users.bookings",)
 
     id = db.Column(db.Integer, primary_key=True)
     departure_place = db.Column(db.String(255), nullable=False)
@@ -74,6 +86,10 @@ class Schedule(db.Model, SerializerMixin):
     departure_time = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     price = db.Column(db.Integer)
     bus_id = db.Column(db.Integer, db.ForeignKey('bus.id'))
+
+
+    # Many-to-many relationship with User through the user_schedule association table
+    users = db.relationship('User', secondary=user_schedule, back_populates='bookings')
 
     def __repr__(self):
         return f"Schedule(departure_time={self.departure_place}, arrival_place={self.arrival_place}, departure_time={self.departure_time})"

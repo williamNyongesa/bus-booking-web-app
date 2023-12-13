@@ -1,7 +1,7 @@
 from datetime import datetime
 from flask import Flask, make_response, request, jsonify, session
 from flask_migrate import Migrate
-from models import db, User, Schedule
+from models import db, User, Schedule, Bus
 from flask_restful import Resource, Api, reqparse
 from flask_cors import CORS
 
@@ -199,6 +199,104 @@ class DeleteSchedule(Resource):
                 return {"error": "Schedule not found"}, 404
 
         return {"error": "Schedule ID must be provided!"}, 422
+    
+
+class SearchResults(Resource):
+    def get(self):
+        departure = request.args.get('departure')
+        arrival = request.args.get('arrival')
+
+        # Assuming you want to search for schedules in the ScheduleList
+        schedules = Schedule.query.filter(
+            Schedule.departure_place.ilike(f"%{departure}%"),
+            Schedule.arrival_place.ilike(f"%{arrival}%")
+        ).all()
+
+        return [schedule.to_dict() for schedule in schedules]
+    
+
+class Bookings(Resource):
+    def post(self):
+        if "user_id" in session:
+            user_id = session["user_id"]
+            print(f"User ID: {user_id}")
+
+
+            # Get user and schedule details from the request
+            user = User.query.get(user_id)
+            if user:
+                data = request.json
+                print(f"Received data: {data}")
+                schedule_id = data.get("schedule_id")
+                print(f"Schedule ID: {schedule_id}")
+
+                # Assuming you have a relationship between User and Schedule models
+                schedule = Schedule.query.get(schedule_id)
+                if schedule:
+                    # Check if the schedule is not already booked
+                    if schedule not in user.bookings:
+                        # Add the schedule to the user's bookings
+                        user.bookings.append(schedule)
+                        db.session.commit()
+
+                        return {"message": "Booking created successfully"}, 201
+                    else:
+                        return {"error": "Schedule already booked"}, 400
+                else:
+                    return {"error": "Schedule not found"}, 404
+
+        return {"error": "User not logged in"}, 401
+
+
+class UserBookings(Resource):
+    def get(self):
+        if "user_id" in session:
+            user_id = session["user_id"]
+            user = User.query.get(user_id)
+            if user:
+                bookings = [booking.to_dict() for booking in user.bookings]
+                return bookings, 200
+
+        return {"error": "User not logged in"}, 401
+
+
+
+class Buses(Resource):
+    def get(self):
+        buses = Bus.query.all()
+        res = [bus.to_dict() for bus in buses]
+        return make_response(jsonify(res), 200)
+
+    def post(self):
+
+        try:
+            data = request.get_json()
+            number_of_seats = data.get("number_of_seats")
+            cost_per_seat = data.get("cost_per_seat")
+            route = data.get("route")
+            time_of_travel = data.get("time_of_travel")
+
+            if number_of_seats and cost_per_seat and route and time_of_travel:
+                new_bus = Bus(
+                    number_of_seats=number_of_seats,
+                    cost_per_seat=cost_per_seat,
+                    route=route,
+                    time_of_travel=time_of_travel,
+                    user_id=session.get("user_id")  
+                )
+
+                db.session.add(new_bus)
+                db.session.commit()
+
+                return {"message": "Bus added successfully"}, 201
+
+            return {"error": "All fields must be provided!"}, 422
+        except Exception as e:
+            print(f"Error in /buses POST: {e}")
+            return {"error": "An unexpected error occurred"}, 500
+    
+
+
 
 api.add_resource(Index, "/")
 api.add_resource(UserResource, "/users")
@@ -209,6 +307,13 @@ api.add_resource(Logout, "/logout", endpoint="logout")
 api.add_resource(AddSchedule, "/add-schedule", endpoint="add_schedule")
 api.add_resource(EditSchedule, "/edit-schedule", endpoint="edit_schedule")
 api.add_resource(DeleteSchedule, "/delete-schedule", endpoint="delete_schedule")
+api.add_resource(SearchResults, "/search-results", endpoint="search_results")
+api.add_resource(Bookings, "/bookings")
+api.add_resource(UserBookings, "/user-bookings")
+api.add_resource(Buses, "/buses")
+
+
+
 
 if __name__ == "__main__":
     app.run(port=5555, debug=True)
