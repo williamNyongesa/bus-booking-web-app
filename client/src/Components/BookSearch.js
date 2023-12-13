@@ -2,11 +2,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-function Booking() {
+function Booking({ onSearch }) {
   const navigate = useNavigate();
   const [departure, setDeparture] = useState("");
   const [arrival, setArrival] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+  const [displayResults, setDisplayResults] = useState([]);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -16,13 +17,17 @@ function Booking() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/schedules"); // Update with your backend endpoint
+      const response = await fetch("http://localhost:5000/add-schedule", {
+        credentials: "include", // Include this line to send credentials with the request
+      });
+
       if (!response.ok) {
         throw new Error("Error fetching schedules");
       }
 
       const data = await response.json();
       setSearchResults(data);
+      setDisplayResults(data);
     } catch (error) {
       setError("Error fetching data from the backend");
     }
@@ -32,11 +37,13 @@ function Booking() {
     // Filtering logic based on departure and arrival
     const results = searchResults.filter(
       (result) =>
-        result.departure.toLowerCase().includes(departure.toLowerCase()) &&
-        result.arrival.toLowerCase().includes(arrival.toLowerCase())
+        result.departure_place
+          .toLowerCase()
+          .includes(departure.toLowerCase()) &&
+        result.arrival_place.toLowerCase().includes(arrival.toLowerCase())
     );
 
-    setSearchResults(results);
+    setDisplayResults(results);
 
     if (results.length === 0) {
       setError("No matching schedules found.");
@@ -44,8 +51,11 @@ function Booking() {
       setError(null);
     }
 
+    // Trigger the search in the parent component
+    onSearch(departure, arrival);
+
     // navigate based on your requirements
-    navigate(`/search?departure=${departure}&arrival=${arrival}`);
+    navigate(`/search-results?departure=${departure}&arrival=${arrival}`);
   };
 
   return (
@@ -67,20 +77,21 @@ function Booking() {
         SEARCH
       </button>
 
-      {error && <p className="error-message">{error}</p>}
+      {/* {error && <p className="error-message">{error}</p>}
 
-      {searchResults.length > 0 && (
+      {displayResults.length > 0 && (
         <div className="search-results">
           <h3>Search Results:</h3>
           <ul>
-            {searchResults.map((result) => (
+            {displayResults.map((result) => (
               <li key={result.id}>
-                {result.departure} to {result.arrival} at {result.time}
+                {result.departure_place} to {result.arrival_place} at{" "}
+                {result.departure_time}
               </li>
             ))}
           </ul>
         </div>
-      )}
+      )} */}
     </div>
   );
 }

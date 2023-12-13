@@ -204,6 +204,7 @@ li {
   margin-top: 10px;
 }
 
+/* ScheduleList */
 .schedule-list-container {
   background-color: rgba(157, 181, 169, 0.8);
   padding: 20px;
@@ -217,4 +218,132 @@ li {
   /* height: 60vh; */
   justify-content: center;
   font-family: "Roboto", sans-serif;
+}
+
+/* SearchResult css */
+.search-result-container {
+  background-color: rgba(157, 181, 169, 0.8);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px;
+  margin-top: 40px;
+  margin: auto;
+  align-items: center;
+  width: 300px;
+  /* height: 60vh; */
+  justify-content: center;
+  font-family: "Roboto", sans-serif;
+}
+
+/* My Bookings CSS */
+.my-bookings {
+  background-color: rgba(157, 181, 169, 0.8);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px;
+  margin-top: 40px;
+  margin: auto;
+  align-items: center;
+  width: 300px;
+  /* height: 60vh; */
+  justify-content: center;
+  font-family: "Roboto", sans-serif;
+}
+
+/* Book button */
+.green-button {
+  background-color: green;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+}
+
+/* Add Bus CSS */
+.add-bus-form {
+  background-color: rgba(157, 181, 169, 0.8);
+  padding: 20px;
+  border-radius: 20px;
+  margin: 40px auto;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: "Roboto", sans-serif;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.add-bus-form label {
+  margin-bottom: 8px;
+}
+
+.add-bus-form input {
+  padding: 8px;
+  margin-bottom: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.add-bus-form button {
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.add-bus-form button:hover {
+  background-color: #218838;
+}
+
+.bus-list {
+  background-color: rgba(157, 181, 169, 0.8);
+  padding: 50px;
+  border-radius: 20px;
+  margin: 40px auto;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: "Roboto", sans-serif;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* NavbarComp.css */
+
+/* Add custom styles for the dropdown here */
+.custom-navbar .nav-item .nav-link.dropdown-toggle {
+  color: #fff; /* Change text color */
+}
+
+.custom-navbar .nav-item .nav-link.dropdown-toggle:hover {
+  background-color: #37473f; /* Change background color on hover */
+}
+
+.custom-navbar .nav-item .nav-link.active {
+  background-color: #fff; /* Change background color when active */
+}
+
+.custom-navbar .dropdown-menu {
+  background-color: rgba(
+    157,
+    181,
+    169,
+    0.8
+  ); /* Change dropdown background color */
+}
+
+.custom-navbar .dropdown-item {
+  color: #fff; /* Change dropdown item text color */
+}
+
+.custom-navbar .dropdown-item:hover {
+  background-color: #ffff; /* Change dropdown item background color on hover */
 }

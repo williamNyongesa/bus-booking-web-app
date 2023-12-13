@@ -1,7 +1,8 @@
+// ScheduleList.js
 import React, { useState, useEffect } from "react";
 import { Container, Table, Button, Modal, Form } from "react-bootstrap";
 
-const ScheduleList = () => {
+const ScheduleList = ({ searchDeparture, searchArrival }) => {
   const [schedules, setSchedules] = useState([]);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editedSchedule, setEditedSchedule] = useState({});
@@ -112,6 +113,15 @@ const ScheduleList = () => {
     }
   };
 
+  // Filter schedules based on search criteria
+  const filteredSchedules = schedules.filter(
+    (schedule) =>
+      schedule.departure_place
+        .toLowerCase()
+        .includes(searchDeparture.toLowerCase()) &&
+      schedule.arrival_place.toLowerCase().includes(searchArrival.toLowerCase())
+  );
+
   return (
     <Container className="mt-4 schedule-list-container">
       <h2>Schedule List</h2>
@@ -127,7 +137,7 @@ const ScheduleList = () => {
           </tr>
         </thead>
         <tbody>
-          {schedules.map((schedule, index) => (
+          {filteredSchedules.map((schedule, index) => (
             <tr key={schedule.id}>
               <td>{schedule.departure_place}</td>
               <td>{schedule.arrival_place}</td>
@@ -168,11 +178,11 @@ const ScheduleList = () => {
               <Form.Label>Departure Time:</Form.Label>
               <Form.Control
                 type="text"
-                value={editedSchedule.departureTime || ""}
+                value={editedSchedule.departure_time || ""}
                 onChange={(e) =>
                   setEditedSchedule({
                     ...editedSchedule,
-                    departureTime: e.target.value,
+                    departure_time: e.target.value,
                   })
                 }
                 required
@@ -182,11 +192,11 @@ const ScheduleList = () => {
               <Form.Label>Arrival Time:</Form.Label>
               <Form.Control
                 type="text"
-                value={editedSchedule.arrivalTime}
+                value={editedSchedule.arrival_time}
                 onChange={(e) =>
                   setEditedSchedule({
                     ...editedSchedule,
-                    arrivalTime: e.target.value,
+                    arrival_time: e.target.value,
                   })
                 }
                 required

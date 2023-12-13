@@ -4,6 +4,7 @@ import bus_icon from "../Images/bus.png";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
+import NavDropdown from "react-bootstrap/NavDropdown";
 import "./Navbar.css";
 import LogoutButton from "../Logout";
 
@@ -24,9 +25,15 @@ function NavbarComp() {
           </Nav>
           <Nav>
             <Nav.Link href="/home">Home</Nav.Link>
-            <Nav.Link href="/schedule-list">Schedule</Nav.Link>
+            <Nav.Link href="/schedule-list">Schedules</Nav.Link>
             <Nav.Link href="/myBookings">My Bookings</Nav.Link>
-            <Nav.Link href="/add-schedule">Maintenance</Nav.Link>
+            <Nav.Link href="/bus-list">Buses</Nav.Link>
+            <NavDropdown title="Maintenance" id="basic-nav-dropdown">
+              <NavDropdown.Item href="/add-schedule">
+                Add Schedule
+              </NavDropdown.Item>
+              <NavDropdown.Item href="/add-bus">Add Bus</NavDropdown.Item>
+            </NavDropdown>
             <Button style={{ height: "35px" }} variant="outline-dark" href="/">
               <LogoutButton />
             </Button>
